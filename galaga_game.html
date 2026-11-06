@@ -71,10 +71,6 @@ document.addEventListener("keydown", function (e) {
     if (e.key === " " || e.key === "Enter") {
         if (state === "title") startGame();
         else if (state === "gameover") { state = "title"; }
-        // Space is consumed for state transitions; clear it so it doesn't
-        // also fire a shot on the very next playing frame.
-        keys[" "] = false;
-        keys["Space"] = false;
     }
     e.preventDefault();
 });
