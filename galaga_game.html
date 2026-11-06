@@ -71,6 +71,10 @@ document.addEventListener("keydown", function (e) {
     if (e.key === " " || e.key === "Enter") {
         if (state === "title") startGame();
         else if (state === "gameover") { state = "title"; }
+        // Space is consumed for state transitions; clear it so it doesn't
+        // also fire a shot on the very next playing frame.
+        keys[" "] = false;
+        keys["Space"] = false;
     }
     e.preventDefault();
 });
@@ -368,12 +372,17 @@ function update() {
         playerBullets[i].y -= BULLET_SPEED;
         if (playerBullets[i].y < -10) { playerBullets.splice(i, 1); continue; }
 
-        // Check hit enemies
+        // Check hit enemies - test the bullet's center AND its nose (top tip),
+        // because at 7px/frame a 3px-tall bullet can step straight past the
+        // top edge of a slow, swaying enemy between frames.
+        var bx = playerBullets[i].x, by = playerBullets[i].y;
         var hit = false;
         for (var j = 0; j < enemies.length; j++) {
             var e = enemies[j];
             if (!e.alive || e.entering) continue;
-            if (pointInRect(playerBullets[i].x, playerBullets[i].y, e.x, e.y, e.w + 4, e.h + 4)) {
+            var rw = e.w + 4, rh = e.h + 4;
+            if (pointInRect(bx, by, e.x, e.y, rw, rh) ||
+                pointInRect(bx, by - BULLET_SPEED, e.x, e.y, rw, rh)) {
                 e.alive = false;
                 hit = true;
                 var pts = e.type === 2 ? 150 : (e.type === 1 ? 80 : 50);
