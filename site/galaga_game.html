@@ -372,7 +372,7 @@ function update() {
         var hit = false;
         for (var j = 0; j < enemies.length; j++) {
             var e = enemies[j];
-            if (!e.alive || e.entering) continue;
+            if (!e.alive) continue;
             if (pointInRect(playerBullets[i].x, playerBullets[i].y, e.x, e.y, e.w + 4, e.h + 4)) {
                 e.alive = false;
                 hit = true;
