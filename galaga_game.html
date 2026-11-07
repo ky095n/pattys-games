@@ -26,16 +26,16 @@ var W = 480;
 var H = 640;
 var FPS = 60;
 var PLAYER_SPEED = 4;
-var BULLET_SPEED = 7;
-var ENEMY_BULLET_SPEED = 4;
-var MAX_ENEMIES = 18;
+var BULLET_SPEED = 9;
+var ENEMY_BULLET_SPEED = 3;
+var MAX_ENEMIES = 28;
 var STAGE_CLEAR_BONUS = 100;
 
 // --- Game state ---
 var state = "title"; // title, playing, gameover, stageintro
 var score = 0;
 var highScore = 0;
-var lives = 3;
+var lives = 5;
 var stage = 1;
 var stageTimer = 0;
 var shakeTimer = 0;
@@ -301,10 +301,9 @@ function update() {
         if (p.life <= 0) particles.splice(i, 1);
     }
 
-    if (state === "stageintro") {
-        stageTimer--;
-        if (stageTimer <= 0) state = "playing";
-        // Animate enemies flying in
+    // Animate enemies flying in (runs in both stageintro and playing,
+    // so enemies still entering when the intro timer expires finish their entry)
+    if (state === "stageintro" || state === "playing") {
         for (var i = 0; i < enemies.length; i++) {
             var e = enemies[i];
             if (!e.alive) continue;
@@ -326,6 +325,11 @@ function update() {
                 }
             }
         }
+    }
+
+    if (state === "stageintro") {
+        stageTimer--;
+        if (stageTimer <= 0) state = "playing";
         return;
     }
 
